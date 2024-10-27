@@ -1,0 +1,6 @@
+[submodule "java/dacapobench"]
+	path = java/dacapobench
+	url = https://github.com/dacapobench/dacapobench
+[submodule "java/renaissance"]
+	path = java/renaissance
+	url = https://github.com/renaissance-benchmarks/renaissance
