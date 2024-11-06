@@ -8,13 +8,11 @@ import (
 )
 
 func BenchmarkParMnemonics(b *testing.B) {
-	var memStatsBeforeGCExecution runtime.MemStats
 	var memStatsAfterGCExecution runtime.MemStats
 	for i := 0; i < b.N; i++ {
-		runtime.ReadMemStats(&memStatsBeforeGCExecution)
+		runtime.GC()
 		parmnemonics.Run("5225")
 		runtime.ReadMemStats(&memStatsAfterGCExecution)
-		stats.PrintGCStats(memStatsBeforeGCExecution)
 		stats.PrintGCStats(memStatsAfterGCExecution)
 	}
 }
