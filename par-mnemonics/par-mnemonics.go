@@ -1,7 +1,7 @@
 package parmnemonics
 
 import (
-	"unicode"
+	"sync"
 )
 
 var mnemonics = map[string]string{
@@ -15,39 +15,34 @@ var mnemonics = map[string]string{
 	"9": "WXYZ",
 }
 
-func WordCode(word string) string {
-	/* TODO Invert the mnemonics map to give a map from chars 'A' ... 'Z' to '2' ... '9'
-	 * e.g. Map(E -> 3, X -> 9, N -> 6, T -> 8, Y -> 9,...)  */
-	charCode := make(map[rune]string)
+func generateMnemonics(digits string, index int, current string, results chan<- string, wg *sync.WaitGroup) {
+	defer wg.Done()
 
-	for key, value := range mnemonics {
-		for _, char := range value {
-			charCode[char] = key
-		}
+	// If all digits have been processed, send the current combination
+	if index == len(digits) {
+		results <- current
+		return
 	}
-
-	word_code := ""
-
-	//	Give a word and return the number
-
-	for _, character := range word {
-		character = unicode.ToUpper(character)
-		word_code += charCode[character]
+	// Get the letters corresponding to the current digit
+	letters := mnemonics[string(digits[index])]
+	for _, letter := range letters {
+		// For each letter, call the function recursively with the next digit
+		wg.Add(1)
+		go generateMnemonics(digits, index+1, current+string(letter), results, wg)
 	}
-
-	return word_code
-
 }
 
-/** A map from digit strings to the words that represent them,
-*  e.g. "5282" -> Set("Java", "Kata", "Lava", ...) */
-func wordsForNum(word_code string) map[string][]string {
-	//list := []string{}
-	ret := make(map[string][]string)
-	return ret
-}
+func Run(phoneNumber string) {
+	results := make(chan string)
 
-// WordForNum parallel
-func wordsForNumParallel() {
+	var wg sync.WaitGroup
 
+	wg.Add(1)
+
+	go generateMnemonics(phoneNumber, 0, "", results, &wg)
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
 }
