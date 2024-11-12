@@ -1,6 +1,7 @@
-package xalan
+package xalan_test
 
 import (
+	"benchmarks/xalan"
 	"testing"
 )
 
@@ -27,6 +28,6 @@ var files = []string{
 
 func BenchmarkXalan(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-
+		xalan.Run()
 	}
 }

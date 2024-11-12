@@ -1,12 +1,12 @@
-package fjkmeans
+package fjkmeans_test
 
 import (
+	fjkmeans "benchmarks/fj-kmeans"
 	"testing"
 )
 
 func BenchmarkFJKMeans(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var result uint8 = 1
-		result++
+		fjkmeans.Run()
 	}
 }
