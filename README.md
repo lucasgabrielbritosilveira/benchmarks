@@ -8,21 +8,21 @@ An adaptation of some Java benchmarks extracted from Dacapo and Reinassance suit
 
 ## par-mnemonics
 
-A técnica de pair mnemonics utilizando streams do JDK para facilitar a memorização de pares de informações, como palavras ou números. Com
-streams, você pode processar coleções de dados de forma declarativa e paralela. Cada
-par é transformado em uma associação mnemônica significativa através de operações
-com mapas
+The pair mnemonics technique uses JDK streams to facilitate the memorization of pairs of information, such as words or numbers. With
+streams, you can process collections of data declaratively and in parallel. Each
+pair is transformed into a meaningful mnemonic association through operations
+with maps
 
 ## xalan
 
-Converte documentos XML, aplicando folhas de estilo XSLT para produzir
-saídas formatadas. A escolha do Xalan se justifica por ser uma carga de trabalho customizável. Adapted from DaCapo suite
+Converts XML documents by applying XSLT stylesheets to produce
+formatted outputs. The choice of Xalan is justified because it is a customizable workload. Adapted from DaCapo suite
 
 ## fj-kmeans
 
-O algoritmo de k-means utilizando Fork/Join em Java paraleliza o pro-
-cesso de agrupamento de dados em clusters. Inicialmente, os pontos de dados são
-distribuídos em subtarefas, cada uma responsável por calcular a distância dos pontos
-aos centróides e atribuir os pontos ao cluster mais próximo. Cada subtarefa é tratada
-como uma instância de uma classe que estende RecursiveTask. O ForkJoinPool
-gerencia a execução paralela dessas subtarefas.
+The k-means algorithm using Fork/Join in Java parallelizes the pro-
+process of grouping data into clusters. Initially, the data points are
+distributed in subtasks, each responsible for calculating the distance of the points
+to the centroids and assigning the points to the closest cluster. Each subtask is handled
+as an instance of a class that extends RecursiveTask. The ForkJoinPool
+manages the parallel execution of these subtasks.
