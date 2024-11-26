@@ -3,7 +3,7 @@ echo "Running par-mnemonics"
 
 echo "GOGC,Mallocs,Frees,HeapAlloc,HeapSys,HeapReleased,NextGC,LastGC,PauseTotalNs,NumGC,NumForcedGC,GCCPUFraction" > ./output/parmnemonics_results.csv  
 
-cd go/
+cd benchmarks/
 
 export GOGC=25  && go test -bench=. -benchtime=10x $PWD/par-mnemonics/  && cat $PWD/par-mnemonics/results.csv >> ../output/parmnemonics_results.csv 
 export GOGC=50  && go test -bench=. -benchtime=10x $PWD/par-mnemonics/  && cat $PWD/par-mnemonics/results.csv >> ../output/parmnemonics_results.csv 

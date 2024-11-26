@@ -21,7 +21,7 @@ func BenchmarkParMnemonics(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		runtime.GC()
-		parmnemonics.Run("522552252356")
+		parmnemonics.Run()
 		runtime.ReadMemStats(&memStatsAfterGCExecution)
 		executions_data = append(executions_data, stats.GenerateExecutionData(&memStatsAfterGCExecution))
 	}

@@ -4,3 +4,6 @@
 [submodule "java/renaissance"]
 	path = java/renaissance
 	url = https://github.com/renaissance-benchmarks/renaissance
+[submodule "go/benchmarks"]
+	path = go/benchmarks
+	url = https://github.com/golang/benchmarks
