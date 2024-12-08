@@ -1,1 +1,2 @@
 GOGC,Mallocs,Frees,HeapAlloc,HeapSys,HeapReleased,NextGC,LastGC,PauseTotalNs,NumGC,NumForcedGC,GCCPUFraction
+25,501,192,183104,3768320,2195456,1212552,1733686873579721394,59908,4,3,0.01

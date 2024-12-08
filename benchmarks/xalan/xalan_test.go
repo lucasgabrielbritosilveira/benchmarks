@@ -1,33 +1,38 @@
 package xalan_test
 
 import (
+	stats "benchmarks/utils"
 	"benchmarks/xalan"
+	"encoding/csv"
+	"os"
+	"runtime"
 	"testing"
 )
 
-var files = []string{
-	"files/acks.xml",
-	"files/binding.xml",
-	"files/changes.xml",
-	"files/concepts.xml",
-	"files/controls.xml",
-	"files/datatypes.xml",
-	"files/expr.xml",
-	"files/index.xml",
-	"files/intro.xml",
-	"files/model.xml",
-	"files/prod-notes.xml",
-	"files/references.xml",
-	"files/rpm.xml",
-	"files/schema.xml",
-	"files/structure.xml",
-	"files/template.xml",
-	"files/terms.xml",
-	"files/ui.xml",
-}
+func BenchmarkParMnemonics(b *testing.B) {
+	file, err := os.Create("results.csv")
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
 
-func BenchmarkXalan(b *testing.B) {
+	var memStatsAfterGCExecution runtime.MemStats
+	executions_data := [][]string{}
+
 	for i := 0; i < b.N; i++ {
+		runtime.GC()
 		xalan.Run()
+		runtime.ReadMemStats(&memStatsAfterGCExecution)
+		executions_data = append(executions_data, stats.GenerateExecutionData(&memStatsAfterGCExecution))
+	}
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	for _, data := range executions_data {
+		err := writer.Write(data)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
