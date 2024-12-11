@@ -3,12 +3,13 @@ package xalan
 import (
 	"fmt"
 	"os"
+	"sync"
 
 	go_xslt "github.com/wamuir/go-xslt"
 )
 
-func WorkerXML(file_path string) {
-
+func WorkerXML(file_path string, wg *sync.WaitGroup) {
+	defer wg.Done()
 	fmt.Println("Working in", file_path)
 
 	xslPath := "template/xmlspec.xsl"
@@ -29,28 +30,42 @@ func WorkerXML(file_path string) {
 		panic(err)
 	}
 
-	result, err := processor.Transform([]byte(file_data))
+	_, err = processor.Transform([]byte(file_data))
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(string(result))
 
 }
 
 func Run() {
 	files_dir := "workload/"
 	files := []string{
-		"template.xml",
+		"acks.xml",
+		"binding.xml",
+		"changes.xml",
+		"concepts.xml",
+		"controls.xml",
+		"datatypes.xml",
+		"expr.xml",
 		"index.xml",
+		"intro.xml",
+		"model.xml",
 		"prod-notes.xml",
-		"schema.xml",
-		"terms.xml",
 		"references.xml",
+		"rpm.xml",
+		"schema.xml",
+		"structure.xml",
+		"template.xml",
+		"terms.xml",
+		"ui.xml",
 	}
+
+	var wg sync.WaitGroup
 
 	for _, file := range files {
-		WorkerXML(files_dir + file)
+		wg.Add(1)
+		WorkerXML(files_dir+file, &wg)
 	}
 
+	wg.Wait()
 }

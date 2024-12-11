@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-parmnemonics=false
+parmnemonics=true
 xalan=true
 fj_kmeans=false
 
@@ -31,11 +31,13 @@ echo "GOGC,Mallocs,Frees,HeapAlloc,HeapSys,HeapReleased,NextGC,LastGC,PauseTotal
 
 cd benchmarks/
 
-export GOGC=25  && go test -bench=. -benchtime=1x $PWD/xalan/  && cat $PWD/xalan/results.csv >> ../output/xalan_results.csv 
-#export GOGC=50  && go test -bench=. -benchtime=10x $PWD/xalan/  && cat $PWD/xalan/results.csv >> ../output/xalan_results.csv 
-#export GOGC=100 && go test -bench=. -benchtime=10x $PWD/xalan/  && cat $PWD/xalan/results.csv >> ../output/xalan_results.csv 
-#export GOGC=200 && go test -bench=. -benchtime=10x $PWD/xalan/  && cat $PWD/xalan/results.csv >> ../output/xalan_results.csv 
-#export GOGC=400 && go test -bench=. -benchtime=10x $PWD/xalan/  && cat $PWD/xalan/results.csv >> ../output/xalan_results.csv 
+export GOGC=25  && go test -bench=. -benchtime=10x $PWD/xalan/  && cat $PWD/xalan/results.csv >> ../output/xalan_results.csv 
+export GOGC=50  && go test -bench=. -benchtime=10x $PWD/xalan/  && cat $PWD/xalan/results.csv >> ../output/xalan_results.csv 
+export GOGC=100 && go test -bench=. -benchtime=10x $PWD/xalan/  && cat $PWD/xalan/results.csv >> ../output/xalan_results.csv 
+export GOGC=200 && go test -bench=. -benchtime=10x $PWD/xalan/  && cat $PWD/xalan/results.csv >> ../output/xalan_results.csv 
+export GOGC=400 && go test -bench=. -benchtime=10x $PWD/xalan/  && cat $PWD/xalan/results.csv >> ../output/xalan_results.csv 
+
+rm $PWD/xalan/results.csv
 
 cd ../
 fi
