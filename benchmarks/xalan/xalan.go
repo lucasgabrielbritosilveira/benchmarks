@@ -3,12 +3,13 @@ package xalan
 import (
 	"fmt"
 	"os"
+	"sync"
 
 	go_xslt "github.com/wamuir/go-xslt"
 )
 
-func WorkerXML(file_path string) {
-
+func WorkerXML(file_path string, wg *sync.WaitGroup) {
+	defer wg.Done()
 	fmt.Println("Working in", file_path)
 
 	xslPath := "template/xmlspec.xsl"
@@ -49,8 +50,12 @@ func Run() {
 		"references.xml",
 	}
 
+	var wg sync.WaitGroup
+
 	for _, file := range files {
-		WorkerXML(files_dir + file)
+		wg.Add(1)
+		WorkerXML(files_dir+file, &wg)
 	}
 
+	wg.Wait()
 }

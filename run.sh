@@ -37,5 +37,7 @@ export GOGC=25  && go test -bench=. -benchtime=1x $PWD/xalan/  && cat $PWD/xalan
 #export GOGC=200 && go test -bench=. -benchtime=10x $PWD/xalan/  && cat $PWD/xalan/results.csv >> ../output/xalan_results.csv 
 #export GOGC=400 && go test -bench=. -benchtime=10x $PWD/xalan/  && cat $PWD/xalan/results.csv >> ../output/xalan_results.csv 
 
+rm $PWD/xalan/results.csv
+
 cd ../
 fi
