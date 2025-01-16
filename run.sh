@@ -1,15 +1,16 @@
 #!/bin/zsh
 
-parmnemonics=false
+parmnemonics=true
 xalan=false
-fjkmeans=true
+fjkmeans=false
+
+header="GOGC,Mallocs,Frees,HeapAlloc,HeapSys,HeapReleased,NextGC,LastGC,PauseTotalNs,NumGC,NumForcedGC,GCCPUFraction,TotalTimeExecutionInMilliseconds"
 
 if [ $parmnemonics = true ]; then
 
 echo "Running par-mnemonics"
 
-echo "GOGC,Mallocs,Frees,HeapAlloc,HeapSys,HeapReleased,NextGC,LastGC,PauseTotalNs,NumGC,NumForcedGC,GCCPUFraction" > ./output/parmnemonics_results.csv  
-
+echo $header > ./output/parmnemonics_results.csv  
 cd benchmarks/
 
 export GOGC=25  && go test -bench=. -benchtime=10x $PWD/par-mnemonics/  && cat $PWD/par-mnemonics/results.csv >> ../output/parmnemonics_results.csv 
@@ -27,7 +28,7 @@ if [ $xalan = true ]; then
 
 echo "Running xalan"
 
-echo "GOGC,Mallocs,Frees,HeapAlloc,HeapSys,HeapReleased,NextGC,LastGC,PauseTotalNs,NumGC,NumForcedGC,GCCPUFraction" > ./output/xalan_results.csv  
+echo $header > ./output/xalan_results.csv  
 
 cd benchmarks/
 
@@ -46,7 +47,7 @@ if [ $fjkmeans = true ]; then
 
 echo "Running fj-kmeans"
 
-echo "GOGC,Mallocs,Frees,HeapAlloc,HeapSys,HeapReleased,NextGC,LastGC,PauseTotalNs,NumGC,NumForcedGC,GCCPUFraction" > ./output/fjkmeans_results.csv  
+echo $header > ./output/fjkmeans_results.csv  
 
 cd benchmarks/
 

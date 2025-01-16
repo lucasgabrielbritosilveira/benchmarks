@@ -7,6 +7,7 @@ import (
 	"os"
 	"runtime"
 	"testing"
+	"time"
 )
 
 func BenchmarkFJKMeans(b *testing.B) {
@@ -21,9 +22,10 @@ func BenchmarkFJKMeans(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		runtime.GC()
+		start := time.Now()
 		fjkmeans.Run()
 		runtime.ReadMemStats(&memStatsAfterGCExecution)
-		executions_data = append(executions_data, stats.GenerateExecutionData(&memStatsAfterGCExecution))
+		executions_data = append(executions_data, stats.GenerateExecutionData(&memStatsAfterGCExecution, time.Since(start)))
 	}
 
 	writer := csv.NewWriter(file)
