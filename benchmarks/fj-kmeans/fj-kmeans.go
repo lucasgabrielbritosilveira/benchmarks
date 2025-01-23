@@ -16,9 +16,9 @@ type KMeans struct {
 }
 
 func NewKMeans(dimension int, clusterCount int, iterationCount int) *KMeans {
-	// Defina um limite baseado no tamanho da memória
-	const sizeLimit = (256 / 2) * 1024 // metade do cache L2, similar ao Java
-	elementSize := dimension*8 + 16    // Tamanho aproximado de um elemento
+	// Define a memory-based limit
+	const sizeLimit = (256 / 2) * 1024 // Half of L2 cache, similar to Java
+	elementSize := dimension*8 + 16    // Approximate size of an element
 	forkThreshold := sizeLimit / elementSize
 
 	return &KMeans{
@@ -29,41 +29,42 @@ func NewKMeans(dimension int, clusterCount int, iterationCount int) *KMeans {
 	}
 }
 
-// Função principal para executar o K-Means
 func (km *KMeans) Run(data [][]float64) [][]float64 {
 	centroids := km.randomSample(data, km.ClusterCount)
 	for i := 0; i < km.IterationCount; i++ {
 		clusters := km.assignClusters(data, centroids)
-		centroids = km.updateCentroids(clusters)
+		centroids = km.updateCentroids(data, clusters)
 	}
 	return centroids
 }
 
-// Seleciona aleatoriamente `clusterCount` centroides
 func (km *KMeans) randomSample(data [][]float64, clusterCount int) [][]float64 {
 	if len(data) == 0 {
 		panic("randomSample: data is empty")
 	}
 
-	rand.Seed(100)
-	sample := make([][]float64, clusterCount)
+	rand.Seed(time.Now().UnixNano())
+	sample := make([][]float64, 0, clusterCount)
+	seen := make(map[int]bool)
 
-	for i := 0; i < clusterCount; i++ {
-		index := rand.Intn(len(data)) // Safe random index
-		sample[i] = data[index]
+	for len(sample) < clusterCount {
+		index := rand.Intn(len(data))
+		if !seen[index] {
+			seen[index] = true
+			sample = append(sample, data[index])
+		}
 	}
 
 	return sample
 }
 
-// Atribui cada ponto ao cluster mais próximo
 func (km *KMeans) assignClusters(data [][]float64, centroids [][]float64) map[int][][]float64 {
 	clusters := make(map[int][][]float64)
+	var mu sync.Mutex
 	var wg sync.WaitGroup
 	dataSize := len(data)
 	taskSize := km.ForkThreshold
 
-	// Cria goroutines para paralelizar a atribuição
 	for start := 0; start < dataSize; start += taskSize {
 		end := start + taskSize
 		if end > dataSize {
@@ -72,17 +73,22 @@ func (km *KMeans) assignClusters(data [][]float64, centroids [][]float64) map[in
 		wg.Add(1)
 		go func(start, end int) {
 			defer wg.Done()
+			localClusters := make(map[int][][]float64)
 			for i := start; i < end; i++ {
 				closest := km.findNearestCentroid(data[i], centroids)
-				clusters[closest] = append(clusters[closest], data[i])
+				localClusters[closest] = append(localClusters[closest], data[i])
 			}
+			mu.Lock()
+			for k, v := range localClusters {
+				clusters[k] = append(clusters[k], v...)
+			}
+			mu.Unlock()
 		}(start, end)
 	}
 	wg.Wait()
 	return clusters
 }
 
-// Calcula o centroide mais próximo
 func (km *KMeans) findNearestCentroid(point []float64, centroids [][]float64) int {
 	minDist := math.MaxFloat64
 	closest := -1
@@ -96,23 +102,26 @@ func (km *KMeans) findNearestCentroid(point []float64, centroids [][]float64) in
 	return closest
 }
 
-// Atualiza os centroides calculando a média dos clusters
-func (km *KMeans) updateCentroids(clusters map[int][][]float64) [][]float64 {
+func (km *KMeans) updateCentroids(data [][]float64, clusters map[int][][]float64) [][]float64 {
 	centroids := make([][]float64, km.ClusterCount)
 	var wg sync.WaitGroup
 
-	for clusterID, points := range clusters {
+	for clusterID := 0; clusterID < km.ClusterCount; clusterID++ {
 		wg.Add(1)
-		go func(clusterID int, points [][]float64) {
+		go func(clusterID int) {
 			defer wg.Done()
-			centroids[clusterID] = computeAverage(points, km.Dimension)
-		}(clusterID, points)
+			points := clusters[clusterID]
+			if len(points) == 0 {
+				centroids[clusterID] = data[rand.Intn(len(data))] // Reassign randomly
+			} else {
+				centroids[clusterID] = computeAverage(points, km.Dimension)
+			}
+		}(clusterID)
 	}
 	wg.Wait()
 	return centroids
 }
 
-// Calcula a média de um conjunto de pontos
 func computeAverage(points [][]float64, dimension int) []float64 {
 	sum := make([]float64, dimension)
 	for _, point := range points {
@@ -126,25 +135,22 @@ func computeAverage(points [][]float64, dimension int) []float64 {
 	return sum
 }
 
-// Distância Euclidiana
 func euclideanDistance(x, y []float64) float64 {
 	sum := 0.0
 	for i := range x {
 		diff := x[i] - y[i]
 		sum += diff * diff
 	}
-	return sum // Sem sqrt para manter compatibilidade com o código Java
+	return math.Sqrt(sum)
 }
 
-// Gera dados aleatórios para teste
 func generateData(count, dimension, clusterCount int) [][]float64 {
-
 	if count <= 0 || dimension <= 0 || clusterCount <= 0 {
 		panic("generateData: invalid parameters")
 	}
 
 	data := make([][]float64, count)
-	rand.New(rand.NewSource(time.Now().UnixNano()))
+	rand.Seed(time.Now().UnixNano())
 	for i := 0; i < count; i++ {
 		point := make([]float64, dimension)
 		for j := 0; j < dimension; j++ {
@@ -160,7 +166,7 @@ func Run() {
 	clusterCount := 5
 	iterationCount := 5
 	loopCount := 5
-	data := generateData(1000, dimension, clusterCount)
+	data := generateData(1000000, dimension, clusterCount)
 
 	kmeans := NewKMeans(dimension, clusterCount, iterationCount)
 
