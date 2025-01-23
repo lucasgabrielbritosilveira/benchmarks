@@ -22,10 +22,12 @@ func BenchmarkParMnemonics(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		runtime.GC()
+		runtime.GC()
 		start := time.Now()
 		xalan.Run()
+		end_time := time.Since(start)
 		runtime.ReadMemStats(&memStatsAfterGCExecution)
-		executions_data = append(executions_data, stats.GenerateExecutionData(&memStatsAfterGCExecution, time.Since(start)))
+		executions_data = append(executions_data, stats.GenerateExecutionData(&memStatsAfterGCExecution, end_time))
 	}
 
 	writer := csv.NewWriter(file)

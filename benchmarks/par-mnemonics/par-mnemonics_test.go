@@ -22,10 +22,13 @@ func BenchmarkParMnemonics(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		runtime.GC()
+		runtime.GC()
+		// Go Official Benchmarks recomends use GC two times in a row to precise results
 		start := time.Now()
 		parmnemonics.Run()
+		end_time := time.Since(start)
 		runtime.ReadMemStats(&memStatsAfterGCExecution)
-		executions_data = append(executions_data, stats.GenerateExecutionData(&memStatsAfterGCExecution, time.Since(start)))
+		executions_data = append(executions_data, stats.GenerateExecutionData(&memStatsAfterGCExecution, end_time))
 	}
 
 	writer := csv.NewWriter(file)
