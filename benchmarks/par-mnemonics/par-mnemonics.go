@@ -151,20 +151,28 @@ func Run() {
 		"Rice",
 		"wyr",
 		"lxm",
-		"q",
-		"w",
-		"e",
-		"r",
-		"t",
-		"y",
-		"u",
-		"i",
-		"o",
-		"p",
-		"a",
-		"s",
-		"d",
-		"f",
+		"Scala",
+		"rocks",
+		"Pack",
+		"brocks",
+		"GWT",
+		"implicit",
+		"nice",
+		"ScalaGWT",
+		"cat",
+		"EFPL",
+		"Lausanne",
+		"sCala",
+		"ROcks",
+		"pAck",
+		"Java",
+		"Apple",
+		"Google",
+		"Rochester",
+		"Utah",
+		"Rice",
+		"wyr",
+		"lxm",
 	}
 
 	currentResult := []string{}
@@ -172,7 +180,7 @@ func Run() {
 	resultChan := make(chan string)
 	var wg sync.WaitGroup
 
-	for x := 0; x < 3; x++ {
+	for x := 0; x < 30; x++ {
 		for _, word := range words {
 			wg.Add(1)
 			go encodeParallel(word, currentResult, resultChan, &wg)
