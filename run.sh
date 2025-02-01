@@ -1,7 +1,7 @@
 #!/bin/zsh
 
-parmnemonics=false
-xalan=false
+parmnemonics=true
+xalan=true
 fjkmeans=true
 
 header="GOGC,Mallocs,Frees,HeapAlloc,HeapSys,HeapReleased,NextGC,LastGC,PauseTotalNs,NumGC,NumForcedGC,GCCPUFraction,TotalTimeExecutionInNanoseconds"

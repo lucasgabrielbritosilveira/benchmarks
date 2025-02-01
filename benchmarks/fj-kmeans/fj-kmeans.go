@@ -166,7 +166,7 @@ func Run() {
 	clusterCount := 5
 	iterationCount := 5
 	loopCount := 5
-	data := generateData(1000000, dimension, clusterCount)
+	data := generateData(100000, dimension, clusterCount)
 
 	kmeans := NewKMeans(dimension, clusterCount, iterationCount)
 

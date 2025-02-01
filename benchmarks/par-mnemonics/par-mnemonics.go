@@ -172,14 +172,14 @@ func Run() {
 	resultChan := make(chan string)
 	var wg sync.WaitGroup
 
-	for _, word := range words {
-		wg.Add(1)
-		go encodeParallel(word, currentResult, resultChan, &wg)
+	for x := 0; x < 3; x++ {
+		for _, word := range words {
+			wg.Add(1)
+			go encodeParallel(word, currentResult, resultChan, &wg)
+		}
+		go func() {
+			wg.Wait()
+			close(resultChan)
+		}()
 	}
-
-	go func() {
-		wg.Wait()
-		close(resultChan)
-	}()
-
 }
